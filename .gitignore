@@ -1,7 +1,5 @@
-bin
+.git
 
-lib
+.python-version
 
-share
-
-pyvenv.cfg
+.gitignore

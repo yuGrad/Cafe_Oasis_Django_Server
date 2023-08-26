@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-bxhw0qqt!)nujwzs3h*ebgo^*o0hbytykgh(k_b$_l59i^-^bv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cafeoasis.xyz', '*', '127.0.0.1', 'localhosts','3.37.227.140']
+ALLOWED_HOSTS = ['cafeoasis.xyz', '*', '127.0.0.1', 'localhosts']
 
 
 # Application definition
@@ -84,8 +84,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치
         'NAME': 'Oasis_db',
-        'USER': 'root',
-        'PASSWORD': 'tiger', # mariaDB 설치 시 입력한 root 비밀번호 입력
+        'USER': 'du',
+        'PASSWORD': 'aa1541', # mariaDB 설치 시 입력한 root 비밀번호 입력
         'HOST': 'localhost',
         'PORT': ''
     }
