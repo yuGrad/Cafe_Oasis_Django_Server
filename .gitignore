@@ -4,4 +4,4 @@ lib
 
 share
 
-pyvenv
+pyvenv.cfg
