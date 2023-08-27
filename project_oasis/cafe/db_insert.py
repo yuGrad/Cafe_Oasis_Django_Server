@@ -156,6 +156,6 @@ def import_cafe_img(csv_filepathname):
             cafe.save()
     
 
-import_cafe_value("/home/ubuntu/django_aws/oasis_venv/project_oasis/cafe/cafe_value.csv")
-import_cafe_data("/home/ubuntu/django_aws/oasis_venv/project_oasis/cafe/cafe_df.csv")
-import_cafe_img("/home/ubuntu/django_aws/oasis_venv/project_oasis/cafe/merged_df.csv")
+import_cafe_value("/home/du/duhyun/django/cafe_oasis/Cafe_Oasis_Django_Server/project_oasis/cafe/ML/cafe_value.csv")
+import_cafe_data("/home/du/duhyun/django/cafe_oasis/Cafe_Oasis_Django_Server/project_oasis/cafe/ML/cafe_df.csv")
+import_cafe_img("/home/du/duhyun/django/cafe_oasis/Cafe_Oasis_Django_Server/project_oasis/cafe/ML/merged_df.csv")
