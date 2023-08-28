@@ -1,5 +1,3 @@
-![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/687543d8-b35d-4336-a08f-dcc718478fdc)![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/712d4210-edff-4df7-b0a1-41f55882b00f)![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/69ac6783-0d2b-4a1f-9896-4be2ab28aac0)# Cafe Oasis-Readme
-
 # ****Oasis: A Content-Based Café Recommendation System****
 
 ---
@@ -10,7 +8,7 @@
 
 ---
 
-![Untitled](notion://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F7b6dcbbc-bd49-4715-8a4f-6bc8e9b3af7b%2FUntitled.png?table=block&id=d87e369a-32dd-49b8-a673-398d581042bc&spaceId=86dcf0da-6aa9-47ad-acd4-8724d2ee36d2&width=2000&userId=6b8e0e15-538f-4dcf-b74d-416efc1c207e&cache=v2)
+![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/69ac6783-0d2b-4a1f-9896-4be2ab28aac0)
 
 ### 개발 멤버
 
@@ -69,19 +67,20 @@
     
     - Device Manager에서 AVD를 생성 후 에뮬레이터를 실행합니다.
         
-        ![Untitled](notion://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F6b396430-1778-4f60-955d-0e287fe89670%2FUntitled.png?table=block&id=f4b06ff2-382b-4249-8b1d-daaf4d1f33eb&spaceId=86dcf0da-6aa9-47ad-acd4-8724d2ee36d2&width=2000&userId=6b8e0e15-538f-4dcf-b74d-416efc1c207e&cache=v2)
+        ![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/2497ea19-781a-4709-8a0c-73d21e13d46b)
         
     - 에뮬레이터 확장 제어에서 Location에서 원하는 위치를 선택하고 SET LOCATION 버튼을 눌러 위치를 설정합니다.
     
-    ![Untitled](notion://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F2fd2de86-3525-4d3a-978a-c9ff6852654d%2FUntitled.png?table=block&id=aaaad5e2-3811-4d88-a05e-a1e9589d2186&spaceId=86dcf0da-6aa9-47ad-acd4-8724d2ee36d2&width=2000&userId=6b8e0e15-538f-4dcf-b74d-416efc1c207e&cache=v2)
+        ![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/712d4210-edff-4df7-b0a1-41f55882b00f)
     
     - 에뮬레이터 메뉴에서 Maps 앱을 눌러 GPS 위치가 올바른지 확인합니다.
     
-    ![Untitled](notion://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F40d50318-4df8-4d10-9d60-bd9800c1100d%2FUntitled.png?table=block&id=61ca8eab-dd61-48cb-9591-7c5804e12e60&spaceId=86dcf0da-6aa9-47ad-acd4-8724d2ee36d2&width=2000&userId=6b8e0e15-538f-4dcf-b74d-416efc1c207e&cache=v2)
+        ![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/687543d8-b35d-4336-a08f-dcc718478fdc)
     
     - 첨부된 ex1 파일을 안드로이드 스튜디오에서 불러오고 상단 바의 Run 버튼을 눌러 실행합니다.
         
-        ![Untitled](notion://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Fb72230bc-3dda-4959-a2f7-55acadb12ca7%2FUntitled.png?table=block&id=ce3ad4c3-07ca-46b5-9ac7-135bfb04ceba&spaceId=86dcf0da-6aa9-47ad-acd4-8724d2ee36d2&width=2000&userId=6b8e0e15-538f-4dcf-b74d-416efc1c207e&cache=v2)
+        ![image](https://github.com/yuGrad/Cafe_Oasis_Django_Server/assets/102767676/8b926077-5f6e-4508-ad06-21a6ca333147)
+
         
 - 서버 실행 방법
     
