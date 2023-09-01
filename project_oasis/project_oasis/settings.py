@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-bxhw0qqt!)nujwzs3h*ebgo^*o0hbytykgh(k_b$_l59i^-^bv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cafeoasis.xyz', '*', '127.0.0.1', 'localhosts', '210.123.135.176']
+ALLOWED_HOSTS = ['cafeoasis.xyz', '*',
+                 '127.0.0.1', 'localhosts', '210.123.135.176']
 
 
 # Application definition
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     'users',
     'cafe',
     'history',
-    #'cafe.apps.RecommendCafeConfig',
+    # 'cafe.apps.RecommendCafeConfig',
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project_oasis.wsgi.application'
+# WSGI_APPLICATION = 'project_oasis.wsgi.application'
 
 
 # Database
@@ -82,15 +83,14 @@ WSGI_APPLICATION = 'project_oasis.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # mysqlclient librarly 설치
+        'ENGINE': 'django.db.backends.mysql',  # mysqlclient librarly 설치
         'NAME': 'Oasis_db',
         'USER': 'du',
-        'PASSWORD': 'aa1541', # mariaDB 설치 시 입력한 root 비밀번호 입력
+        'PASSWORD': 'aa1541',  # mariaDB 설치 시 입력한 root 비밀번호 입력
         'HOST': 'localhost',
         'PORT': ''
     }
 }
-
 
 
 # Password validation
@@ -131,11 +131,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# User model 저의
+AUTH_USER_MODEL = "users.User"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#장고에서 미디어 파일을 관리하기 위한 설정
+# 장고에서 미디어 파일을 관리하기 위한 설정
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, '_media')
