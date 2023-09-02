@@ -7,6 +7,7 @@ from django.contrib.auth.models import (
 
 # https://velog.io/@kyleee/TIL61-Django-auth    password 관련 참고 사이트
 # https://yonghyunlee.gitlab.io/python/user-extend/     로그인 확장
+# https://docs.djangoproject.com/en/3.2/topics/auth/customizing/#django.contrib.auth.models.PermissionsMixin    user 인증 공식문서
 
 # # Create your models here.
 
