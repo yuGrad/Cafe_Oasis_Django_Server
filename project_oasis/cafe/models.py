@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Cafe(models.Model):
-    # cafe_id = models.PositiveIntegerField(primary_key=True, unique=True)
+    cafe_id = models.PositiveIntegerField(primary_key=True)
     business_name = models.CharField(max_length=255)
     cafe_name = models.CharField(max_length=255)
     cafe_rating = models.DecimalField(max_digits=3, decimal_places=2)

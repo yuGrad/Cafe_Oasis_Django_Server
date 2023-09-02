@@ -6,7 +6,7 @@ from cafe.models import Cafe
 
 
 class VisitHistory(models.Model):
-    # visit_id = models.AutoField(primary_key=True)
+    visit_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         User, on_delete=models.DO_NOTHING)
     cafe = models.ForeignKey(
@@ -21,7 +21,7 @@ class VisitHistory(models.Model):
 class CafeRating(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
-    # rating_id = models.AutoField(primary_key=True)
+    rating_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
         User, on_delete=models.DO_NOTHING)
     cafe = models.ForeignKey(

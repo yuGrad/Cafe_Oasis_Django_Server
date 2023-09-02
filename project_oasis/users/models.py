@@ -1,49 +1,74 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin
+)
+
+# https://velog.io/@kyleee/TIL61-Django-auth    password 관련 참고 사이트
+# https://yonghyunlee.gitlab.io/python/user-extend/     로그인 확장
 
 # # Create your models here.
 
 
-class User(AbstractBaseUser):
+class UserManager(BaseUserManager):
+    def create_user(self, email, password, name, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        if not password:
+            raise ValueError('The password field musb be set')
+        if not name:
+            raise ValueError('The Email field must be set')
+
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.name = name
+        user.is_active = True
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, email, password, name, **extra_fields):
+        user = self.create_user(email, password, name, **extra_fields)
+        user.is_staff = True
+        user.is_superuser = True
+
+        user.save(using=self._db)
+
+        return user
+
+
+class User(AbstractBaseUser, PermissionsMixin):
     USER_TYPE_CHOICES = [
         ('1', 'Customer'),
         ('2', 'Employee'),
     ]
 
+    user_id = models.AutoField(primary_key=True)
     email = models.EmailField(
         max_length=255, null=False, unique=True)
-    password = models.CharField(max_length=60, default='none')
-    name = models.CharField(max_length=255, default='none')
+    # bcrypt를 사용해도 접두어가 존재할 수 있으므로 60자보다 길 수 있음
+    password = models.CharField(max_length=128, null=False)
+    name = models.CharField(max_length=255, null=False)
     phone_no = models.CharField(max_length=20, default='none')
     registration_date = models.DateTimeField(auto_now_add=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
 
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
+    # is_superuser = models.BooleanField(default=False) # permissionsmixin interface에서 제공하는 속성이므로 제거
 
     USERNAME_FIELD = 'email'
+
+    # superuser 생성할 때 추가적으로 입력할 정보 항목
+    REQUIRED_FIELDS = ['name']
+
+    objects = UserManager()
 
     class Meta:
         db_table = 'User'
 
-
-# class User(models.Model):
-#     USER_TYPE_CHOICES = [
-#         ('1', 'Customer'),
-#         ('2', 'Employee'),
-#     ]
-
-#     user_id = models.AutoField(primary_key=True)
-#     email = models.EmailField(max_length=255, default='none')
-#     password = models.CharField(max_length=60, default='none')
-#     name = models.CharField(max_length=255, default='none')
-#     phone_no = models.CharField(max_length=20, default='none')
-#     registration_date = models.DateTimeField(auto_now_add=True)
-#     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
-
-#     class Meta:
-#         db_table = 'User'
 
 class Customer(User):
     SEX_CHOICES = [
