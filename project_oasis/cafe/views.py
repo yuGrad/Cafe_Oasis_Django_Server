@@ -3,17 +3,25 @@ from django.http import JsonResponse
 import random
 
 from .serializer import CafeSerializer
-from . import recommend, distance
+from .ML import recommend, distance
 from .models import Cafe, CafeKeywords
 
 # Create your views here.
 
 # 사용자의 선호 프로필를 이용해 유사한 키워드를 가진 카페 추천
 def recommend_cafes_base_keyword(request):
-	data = json.loads(request.body.decode('utf-8'))
-	user_cafe_profile = data['user_cafe_profile']
-	user_location = data['user_location']
+	# data = json.loads(request.body.decode('utf-8'))
+	# user_cafe_profile = data['user_cafe_profile']
+	# user_location = data['user_location']
+	user_cafe_profile_str = request.GET.get('user_cafe_profile')
+	user_location_str = request.GET.get('user_location')
 
+	try:
+		user_cafe_profile = list(map(int, user_cafe_profile_str.split(',')))
+		user_location = list(map(float, user_location_str.split(',')))
+	except:
+		return JsonResponse({"message: Invalid data type"}, status=400)
+	
 	#사용자 위치 기준 근처 카페 키워드 데이터
 	nearby_cafes_id = distance.get_cafe_list_base_location(user_location, Cafe.objects.all())
 	nearby_cafes_value = CafeKeywords.objects.filter(cafe__in = nearby_cafes_id)
@@ -37,8 +45,12 @@ def recommend_cafes_base_keyword(request):
 
 # 평점과 자체 공통 키워드를 이용해 TOP 3 카페를 추천
 def recommend_cafes_base_rating(request):
-	data = json.loads(request.body.decode('utf-8'))
-	user_location = data['user_location']
+	user_location_str = request.GET.get('user_location')
+
+	try:
+		user_location = list(map(float, user_location_str.split(',')))
+	except:
+		return JsonResponse({"message: Invalid data type"}, status=400)
 
 	nearby_cafes_id = distance.get_cafe_list_base_location(user_location, Cafe.objects.all())
 	nearby_cafes_value = CafeKeywords.objects.filter(cafe__in=nearby_cafes_id)
