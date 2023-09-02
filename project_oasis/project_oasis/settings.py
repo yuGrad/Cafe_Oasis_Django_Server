@@ -128,15 +128,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 
-# User model 저의
-AUTH_USER_MODEL = "users.User"
+# User Model 관련
+AUTH_USER_MODEL = "users.User"  # User model 정의
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 장고에서 미디어 파일을 관리하기 위한 설정

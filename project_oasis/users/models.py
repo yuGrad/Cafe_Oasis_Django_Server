@@ -10,15 +10,19 @@ class User(AbstractBaseUser):
         ('2', 'Employee'),
     ]
 
-    user_id = models.AutoField(primary_key=True)
-    email = models.EmailField(max_length=255, default='none')
+    email = models.EmailField(
+        max_length=255, null=False, unique=True)
     password = models.CharField(max_length=60, default='none')
     name = models.CharField(max_length=255, default='none')
     phone_no = models.CharField(max_length=20, default='none')
     registration_date = models.DateTimeField(auto_now_add=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
 
-    USERNAME_FIELD = 'user_id'
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'email'
 
     class Meta:
         db_table = 'User'
@@ -61,8 +65,8 @@ class Customer(User):
 class UserKeywords(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 4)]
 
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, primary_key=True, db_column="user_id")
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, primary_key=True)
     beverage = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     dessert = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     various_menu = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
