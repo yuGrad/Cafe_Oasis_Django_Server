@@ -1,8 +1,13 @@
-from django.http            import JsonResponse  
-from django.views           import View          
+#from django.http            import JsonResponse  
+#from django.views           import View          
 #from django.core.exceptions import ValidationError
 #from django.db.models       import Q                                                                                                                
 from django.views.decorators.csrf import csrf_exempt
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.views import APIView
 
 from .models                import Customer, EmailCode, UserKeywords
 from .serializer import CustomerSerializer, UserKeywordsSerializer
@@ -13,7 +18,7 @@ import json
 import bcrypt
 
 #로그인
-class LoginView(View):
+class LoginView(APIView):
      @csrf_exempt
      def post(self, request):
         data = json.loads(request.body)
@@ -37,20 +42,20 @@ class LoginView(View):
                     else:
                         serialzer_user_keywords = None
 
-                    return JsonResponse({'message': "LOGIN_SUCCESS",
+                    return Response({'message': "LOGIN_SUCCESS",
                                          'customer': serialzer_customer.data, 
                                          'user_keywords': serialzer_user_keywords}, 
                                          status=200)
                 else:
-                    return JsonResponse({"message": "INVALID_PASSWORD"}, status=401)
+                    return Response({"message": "INVALID_PASSWORD"}, status=status.HTTP_401_UNAUTHORIZED)
 
             # email 틀렸을시 return    
-            return JsonResponse({"message": "USER_NOT_FOUND"}, status=404)
+            return Response({"message": "USER_NOT_FOUND"}, status=status.HTTP_404_NOT_FOUND)
         except: 
-            return JsonResponse({"message": "INVALID_KEYS"}, status=400)
+            return Response({"message": "INVALID_KEYS"}, status=status.HTTP_400_BAD_REQUEST)
         
 #회원가입
-class SignUpView(View):
+class SignUpView(APIView):
     # post방식으로 요청할 경우 회원가입한다.
     def post(self, request):
         data = json.loads(request.body)
@@ -61,7 +66,7 @@ class SignUpView(View):
         
         if Customer.objects.filter(email = data['email']).exists() or\
             Customer.objects.filter(phone_no = data['phone_no']).exists():
-            return JsonResponse({'message' : "EMAIL_OR_PHONE_EXISTS"},status =409) 
+            return Response({'message' : "EMAIL_OR_PHONE_EXISTS"},status =status.HTTP_409_CONFLICT) 
         
         try :    
             Customer(
@@ -75,9 +80,9 @@ class SignUpView(View):
                 nickname = data['nickname']
             ).save()
             
-            return JsonResponse({'message':'SIGNUP_SUCCESS'}, status=200)
+            return Response({'message':'SIGNUP_SUCCESS'}, status=status.HTTP_200_OK)
         except:
-            return JsonResponse({'message' : "SIGNUP_FAILED"},status =400) 
+            return Response({'message' : "SIGNUP_FAILED"},status =status.HTTP_400_BAD_REQUEST) 
 
     # 조회 get id값으로 !get_all 보내면 전체 조회, 특정 아이디 보내면 해당 아이디 정보 반환
     def get(self, request):
@@ -89,26 +94,26 @@ class SignUpView(View):
         if Customer.objects.filter(email = reqString).exists():
             account = Customer.objects.get(email = reqString)
             # serializer = User_basic_serializer(account)
-            return JsonResponse({"email" : "exist"}, status= 200)
+            return Response({"email" : "exist"}, status=status.HTTP_200_OK)
         else:
-            return JsonResponse({'message' : "INVALID_KEYS"},status=400)
+            return Response({'message' : "INVALID_KEYS"},status=status.HTTP_400_BAD_REQUEST)
 
 #이메일 찾기   
-class FindEmailView(View):
+class FindEmailView(APIView):
     #조회 get id값으로 !get_all 보내면 전체 조회 특정 아이디 보내면 해당 아이디 정보 반환
     def post(self, request):
         data = json.loads(request.body)
 
         if Customer.objects.filter(phone_no = data['phone_no']).exists():
             user_data = Customer.objects.get(phone_no = data['phone_no'])
-            return JsonResponse({'message': "EMAIL_FOUND_SUCCESS",
-                                 'email': user_data.email}, status=200)
+            return Response({'message': "EMAIL_FOUND_SUCCESS",
+                                 'email': user_data.email}, status=status.HTTP_200_OK)
         
         else:
-            return JsonResponse({'message' : "USER_NOT_FOUND"},status=404) 
+            return Response({'message' : "USER_NOT_FOUND"},status=status.HTTP_404_NOT_FOUND) 
         
 #비번 찾기
-class FindPwView(View):
+class FindPwView(APIView):
     # 이메일 전화번호 전달받아 해당 이메일, 전화번호를 가진 유저의 비밀번호 변경
     def post(self, request):
         data = json.loads(request.body)
@@ -124,12 +129,12 @@ class FindPwView(View):
             print(user_data.password)
             # Save the updated instance
             user_data.save()
-            return JsonResponse({'message': "PASSWORD_CHANGE_SUCCESS"}, status=200)
+            return Response({'message': "PASSWORD_CHANGE_SUCCESS"}, status=status.HTTP_200_OK)
         else:
-            return JsonResponse({'message' : "USER_NOT_FOUND"},status =404) 
+            return Response({'message' : "USER_NOT_FOUND"},status =status.HTTP_404_NOT_FOUND) 
 
         
-class EmailSendView(View):
+class EmailSendView(APIView):
     def post(self, request):
         data = json.loads(request.body)
         code = random.sample(range(10), 6)
@@ -144,9 +149,9 @@ class EmailSendView(View):
             
             try:
                 email_validate(data['email'], code)
-                return JsonResponse({'message':"EMAIL_SENT_SUCCESS"}, status=200)
+                return Response({'message':"EMAIL_SENT_SUCCESS"}, status=status.HTTP_200_OK)
             except:
-                return JsonResponse({'message' : "EMAIL_SENDING_FAILED"},status =400) 
+                return Response({'message' : "EMAIL_SENDING_FAILED"},status =status.HTTP_400_BAD_REQUEST) 
         
         elif existFlag:
             email_code = EmailCode.objects.get(user_email = data["email"])
@@ -158,12 +163,12 @@ class EmailSendView(View):
             ).save()
             try:
                 email_validate(data['email'], code)
-                return JsonResponse({'message':"EMAIL_RESENT_SUCCESS"}, status=200)
+                return Response({'message':"EMAIL_RESENT_SUCCESS"}, status=status.HTTP_200_OK)
             except:
-                return JsonResponse({'message' : "EMAIL_SENDING_FAILED"},status =400) 
+                return Response({'message' : "EMAIL_SENDING_FAILED"},status =status.HTTP_400_BAD_REQUEST) 
     
         
-class EmailVerifyView(View):
+class EmailVerifyView(APIView):
     def post(self, request):
         data = json.loads(request.body)
 
@@ -172,15 +177,15 @@ class EmailVerifyView(View):
             try:
                 if email_code.user_code == data["user_code"]:
                     email_code.delete()
-                    return JsonResponse({'message':"EMAIL_VERIFICATION_SUCCESS"}, status=200)
+                    return Response({'message':"EMAIL_VERIFICATION_SUCCESS"}, status=status.HTTP_200_OK)
                 else:
-                    return JsonResponse({'message' : "INCORRECT_EMAIL_VERIFICATION"},status =400) 
+                    return Response({'message' : "INCORRECT_EMAIL_VERIFICATION"},status =status.HTTP_400_BAD_REQUEST) 
             except:
-                return JsonResponse({'message' : "EMAIL_VERIFICATION_FAILED"},status =400) 
+                return Response({'message' : "EMAIL_VERIFICATION_FAILED"},status =status.HTTP_400_BAD_REQUEST) 
 
    
         
-class EditProfileView(View):
+class EditProfileView(APIView):
     # def post(self, request):
     #     data = json.loads(request.body)
 
@@ -213,7 +218,7 @@ class EditProfileView(View):
         # Check if customer exists
         customer = Customer.objects.filter(email=data['email'])
         if not customer.exists():
-            return JsonResponse({'message': 'USER_NOT_FOUND'}, status=404)
+            return Response({'message': 'USER_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
         customer = customer[0]
 
         try:
@@ -225,12 +230,12 @@ class EditProfileView(View):
             # Save the updated instance
             customer.save()
 
-            return JsonResponse({'message': 'PROFILE_UPDATE_SUCCESS'}, status=200)
+            return Response({'message': 'PROFILE_UPDATE_SUCCESS'}, status=status.HTTP_200_OK)
         except:
-            return JsonResponse({'message': 'PROFILE_UPDATE_FAILED'}, status=400)
+            return Response({'message': 'PROFILE_UPDATE_FAILED'}, status=status.HTTP_400_BAD_REQUEST)
         
         
-class CreateUserKeywords(View):
+class CreateUserKeywords(APIView):
     def post(self, request):
         data = json.loads(request.body)
         user_keyword_value = list(data['user_keyword_value'])
@@ -255,13 +260,13 @@ class CreateUserKeywords(View):
                         parking=user_keyword_value[10],
                         price=user_keyword_value[11]
                     )
-                    return JsonResponse({'message': "USER_KEYWORDS_CREATED_SUCCESS"}, status=200)
+                    return Response({'message': "USER_KEYWORDS_CREATED_SUCCESS"}, status=status.HTTP_200_OK)
                 except:
-                    return JsonResponse({'message' : "USER_KEYWORDS_CREATION_FAILED"},status =400)
+                    return Response({'message' : "USER_KEYWORDS_CREATION_FAILED"},status =status.HTTP_400_BAD_REQUEST)
             else:
-                return JsonResponse({'message' : "USER_KEYWORDS_EXISTS'"},status =400)
+                return Response({'message' : "USER_KEYWORDS_EXISTS'"},status =status.HTTP_400_BAD_REQUEST)
         else:
-            return JsonResponse({'message' : "USER_NOT_FOUND"},status =404)
+            return Response({'message' : "USER_NOT_FOUND"},status =status.HTTP_404_NOT_FOUND)
 
         # try:
         #     user_id = Customer.objects.get(email = data['email'])
@@ -293,7 +298,7 @@ class CreateUserKeywords(View):
         #     return JsonResponse({'message' : "INVALID_KEYS"},status =400)
 
 
-class UpdateUserKeywords(View):
+class UpdateUserKeywords(APIView):
     def post(self, request):
         data = json.loads(request.body)
         user_keyword_value = list(data['user_keyword_value'])
@@ -301,13 +306,13 @@ class UpdateUserKeywords(View):
         # Check if customer exists
         customer = Customer.objects.filter(email=data['email'])
         if not customer.exists():
-            return JsonResponse({'message': 'USER_NOT_FOUND'}, status=404)
+            return Response({'message': 'USER_NOT_FOUND'}, status=404)
 
         # Check if UserKeywords exists
         try:
             user_keywords = UserKeywords.objects.get(user_id=customer[0])
         except UserKeywords.DoesNotExist:
-            return JsonResponse({'message': 'USER_KEYWORDS_NOT_FOUND'}, status=404)
+            return Response({'message': 'USER_KEYWORDS_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
         # Update fields from request
         try:
@@ -318,9 +323,9 @@ class UpdateUserKeywords(View):
             # Save the updated instance
             user_keywords.save()
 
-            return JsonResponse({'message': 'USER_KEYWORDS_UPDATE_SUCCESS'}, status=200)
+            return Response({'message': 'USER_KEYWORDS_UPDATE_SUCCESS'}, status=status.HTTP_200_OK)
         except:
-            return JsonResponse({'message': 'USER_KEYWORDS_UPDATE_FAILED'}, status=400)
+            return Response({'message': 'USER_KEYWORDS_UPDATE_FAILED'}, status=status.HTTP_400_BAD_REQUEST)
 
         # try:
         #     existFlag = Customer.objects.filter(email = data['email']).exists()
@@ -351,21 +356,21 @@ class UpdateUserKeywords(View):
         #     return JsonResponse({'message' : "INVALID_KEYS"},status =400)
 
             
-class isKeywordExist(View):
+class isKeywordExist(APIView):
     def post(self, request):
         # Check if customer exists
         data = json.loads(request.body)
         customer = Customer.objects.filter(email=data['email'])
         if not customer.exists():
-            return JsonResponse({'message': 'USER_NOT_FOUND'}, status=404)
+            return Response({'message': 'USER_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
         # Check if UserKeywords exists
         try:
             thing = Customer.objects.filter(email=data['email'])
             user_keywords = UserKeywords.objects.get(user=thing[0])
-            return JsonResponse({'message': 'USER_KEYWORDS_EXISTS'}, status=200)
+            return Response({'message': 'USER_KEYWORDS_EXISTS'}, status=status.HTTP_200_OK)
         except UserKeywords.DoesNotExist:
-            return JsonResponse({'message': 'USER_KEYWORDS_NOT_FOUND'}, status=404)
+            return Response({'message': 'USER_KEYWORDS_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
