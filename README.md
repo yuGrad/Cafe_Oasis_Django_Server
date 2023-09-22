@@ -93,77 +93,79 @@
   ## 디렉토리 구조
   ```markdown
   project_oasis/
-  ├── cafe
-  │ ├── ML
-  │ │ ├── cafe_df.csv
-  │ │ ├── cafe_value.csv
-  │ │ ├── cafe_without_keywords.csv
-  │ │ ├── merged_df.csv
-  │ │ └── model.pkl
-  │ ├── **init**.py
-  │ ├── [admin.py](http://admin.py/)
-  │ ├── [apps.py](http://apps.py/)
-  │ ├── db_insert.py
-  │ ├── [distance.py](http://distance.py/)
-  │ ├── migrations
-  │ │ ├── 0001_initial.py
-  │ │ ├── 0002_remove_visithistory_cafe_remove_visithistory_user_and_more.py
-  │ │ └── **init**.py
-  │ ├── [models.py](http://models.py/)
-  │ ├── [recommend.py](http://recommend.py/)
-  │ ├── [serializer.py](http://serializer.py/)
-  │ ├── [tests.py](http://tests.py/)
-  │ ├── [urls.py](http://urls.py/)
-  │ └── [views.py](http://views.py/)
-  ├── history
-  │ ├── **init**.py
-  │ ├── [admin.py](http://admin.py/)
-  │ ├── [apps.py](http://apps.py/)
-  │ ├── migrations
-  │ │ ├── 0001_initial.py
-  │ │ └── **init**.py
-  │ ├── [models.py](http://models.py/)
-  │ ├── [tests.py](http://tests.py/)
-  │ ├── [urls.py](http://urls.py/)
-  │ └── [views.py](http://views.py/)
-  ├── [manage.py](http://manage.py/)
   ├── project_oasis
+  │ ├── cafe
+  │ │ ├── admin.py
+  │ │ ├── apps.py
+  │ │ ├── **init**.py
+  │ │ ├── migrations
+  │ │ ├── ML
+  │ │ ├── models.py
+  │ │ ├── **pycache**
+  │ │ ├── serializer.py
+  │ │ ├── tests.py
+  │ │ ├── urls.py
+  │ │ └── views.py
+  │ ├── history
+  │ │ ├── admin.py
+  │ │ ├── apps.py
+  │ │ ├── **init**.py
+  │ │ ├── migrations
+  │ │ ├── models.py
+  │ │ ├── **pycache**
+  │ │ ├── tests.py
+  │ │ ├── urls.py
+  │ │ └── views.py
+  │ ├── manage.py
+  │ ├── project_oasis
+  │ │ ├── asgi.py
+  │ │ ├── **init**.py
+  │ │ ├── **pycache**
+  │ │ ├── settings.py
+  │ │ ├── urls.py
+  │ │ └── wsgi.py
+  │ └── users
+  │ ├── admin.py
+  │ ├── apps.py
+  │ ├── email_verification.py
   │ ├── **init**.py
-  │ ├── [asgi.py](http://asgi.py/)
-  │ ├── [settings.py](http://settings.py/)
-  │ ├── [urls.py](http://urls.py/)
-  │ └── [wsgi.py](http://wsgi.py/)
+  │ ├── migrations
+  │ ├── models.py
+  │ ├── **pycache**
+  │ ├── serializer.py
+  │ ├── tests.py
+  │ ├── urls.py
+  │ └── views.py
+  ├── README.md
+  ├── requirements.txt
+  └── temp
+  └── migration
+  ├── cafe
+  ├── history
   └── users
-  ├── **init**.py
-  ├── [admin.py](http://admin.py/)
-  ├── [apps.py](http://apps.py/)
-  ├── email_verification.py
-  ├── migrations
-  │ ├── 0001_initial.py
-  │ ├── 0002_alter_customer_sex_alter_user_user_type.py
-  │ ├── 0003_alter_customer_sex_alter_user_user_type.py
-  │ └── **init**.py
-  ├── [models.py](http://models.py/)
-  ├── [serializer.py](http://serializer.py/)
-  ├── [tests.py](http://tests.py/)
-  ├── [urls.py](http://urls.py/)
-  └── [views.py](http://views.py/)
   ```
 - Recommend System
+
   ## Recommend System
+
   ***
+
   ### 카페 데이터 수집
+
   1. 대구 지역으로 제한해서 카페 데이터 수집
   2. 카페 데이터는 네이버 지도에서 해당 카페를 검색한 결과를 크롤링해서 수집
   3. 카페 데이터 크롤링 수집 정보 범위 -> (사업자명, 카페명, 카페이름, 별점, 방문자리뷰수, 블로그리뷰수, 주소, 영업시간, 전화번호, 설명, 키워드)
   4. 크롤링을 통해 수집한 카페 데이터를 csv 파일로 변환
+
   ### 카페 데이터 전처리
+
   1. 각 컬럼의 대한 결측치를 0 이나 다른 값으로 처리
   2. 주소 컬럼이 결측치인 카페 행은 제거
   3. 주소와 전화번호가 중복인 카페 행이 존재 -> 주소와 전화번호가 다른 카페는 다른 카페로 분류
   4. 구글 GeoCoder를 사용해 카페의 주소를 통해 위도, 경도 수집 -> 카페 데이터 프레임에 새로운 컬럼으로 추가
   5. 카페 키워드 중 카페의 특징을 반영하는데 불필요한 키워드는 삭제 -> 키워드가 없는 카페 행끼리 별도로 저장
   6. 남은 키워드들 중에 특징을 반영할 수 있는 유사한 키워드끼리 카테고리고 묶음.
+
   ```python
   categories = {
       # 음료, 음식
@@ -190,13 +192,16 @@
       'common_keywords': ['좌석이 편해요', '친절해요', '화장실이 깨끗해요', '시설이 깔끔해요', '매장이 청결해요'] # '차가 맛있어요', '음료가 맛있어요', '커피가 맛있어요',
   }
   ```
+
   1. 공통 키워드는 카페의 특징이나 취향의 척도가 아닌 대부분의 사용자가 카페를 방문할 때 갖는 기본적인 기대치이므로 별도의 카테고리로 분류.
   2. 카페 데이터 프레임의 각 행에서 카테고리 별 점수를 환산 -> 카페의 각 키워드가 속한 카테고리에 가중치를 계속 합하는 방식 사용.
   3. 카페 각 키워드의 원 가중치를 그대로 사용하면 방문자리뷰가 많은 카페가 압도적으로 높은 가중치를 가짐 -> 각 카페의 특징을 반영하지 못 함
   4. 각 카테고리의 가중치 값의 합으로 각 카테고리를 나눔 -> 카테고리 별 비율을 계산, 공통 키워드 값은 성능의 지표로 사용하기 위해 비율이 아닌 방문자수로 나눔 -> "방문자 1명은 평균적으로 공통 키워드에 대해 이 정도의 점수를 부여했다" 의 의미로 사용
   5. 카페 데이터 프레임의 'beverage', 'dessert', 'various_menu', 'special_menu', 'large_store', 'background', 'talking', 'concentration', 'trendy_store' 컬럼은 1~4범위의 Min-Max 정규화 적용
   6. 'low_price', 'high_price', 'parking', 'gift_packaging', 'common_keywords' 컬럼은 z-score 정규화 -> 해당 각 카테고리의 평균 값을 이용해 0 or 1의 값을 가지기 위해서
+
   ### 카페 추천 알고리즘
+
   1. 클러스터링
      - 카페 데이터 프레임의 각 카테고리의 가중치로 유사한 값을 가진 카페들끼리 군집 -> k-means++ 모델 사용
      - elbow method를 사용해 적절한 n_clusters 파라미터 값을 찾음 -> 8개의 군집으로 분류
@@ -213,9 +218,9 @@
   4. 카페 추천
      - 코사인 유사도가 가장 큰 2개의 카페와 키워드 값이 없는 카페 중 하나를 랜덤으로 추천 -> 카페 추천의 다양성을 위해
      - 추가적으로 사용자 근처 카페 중 별점과 공통 키워드의 합이 가장 큰 3개까지의 카페를 추천
-    <aside>
-    💡 업데이트 방향
-    
-    - 현재는 Contents-based Recommender System을 기반으로 추천 시스템을 구현
-    - 추후 사용자의 카페 방문 기록과 평점 데이터가 수집되면 카페 키워드와 사용자 데이터를 결합한 Hybrid Recommender System 방식의 추천 시스템으로 업데이트 예정
-    </aside>
+     <aside>
+     💡 업데이트 방향
+
+  - 현재는 Contents-based Recommender System을 기반으로 추천 시스템을 구현
+  - 추후 사용자의 카페 방문 기록과 평점 데이터가 수집되면 카페 키워드와 사용자 데이터를 결합한 Hybrid Recommender System 방식의 추천 시스템으로 업데이트 예정
+  </aside>
