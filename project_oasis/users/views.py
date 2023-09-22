@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.views import APIView
 
-from .models                import Customer, EmailCode, UserKeywords
+from .models    import Customer, EmailCode, UserKeywords
 from .serializer import CustomerSerializer, UserKeywordsSerializer
 from .email_verification import email_validate
 
