@@ -1,5 +1,6 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
+from django.contrib.auth import authenticate
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,6 +15,7 @@ import json
 import bcrypt
 
 # 로그인
+# https://axce.tistory.com/116
 
 
 class LoginView(APIView):
@@ -24,30 +26,25 @@ class LoginView(APIView):
         try:
             email = data['email']
             password = data['password']
-            customer = Customer.objects.filter(email=email)
-            if customer.exists():
-                customer = customer[0]
-                # chekpw 메소드를 이용해 사용자가 입력한 패스워드의 해시 값과 데이터 베이스에 저장된 해시 값을 비교
-                if bcrypt.checkpw(password.encode('utf-8'), customer.password.encode('utf-8')):
-                    serialzer_customer = CustomerSerializer(customer)
+            customer = Customer.objects.get(email=email)
+            if customer and customer.check_password(password):
+                # User 객체와 연결된 Customer 객체를 직접 참조
+                serialzer_customer = CustomerSerializer(customer)
 
-                    # 사용자 키워드 불러오기
-                    user_keywords = UserKeywords.objects.filter(user=customer)
-                    if user_keywords.exists():
-                        user_keywords = user_keywords[0]
-                        serialzer_user_keywords = UserKeywordsSerializer(
-                            user_keywords).data
-                    else:
-                        serialzer_user_keywords = None
-
-                    return Response({'message': "LOGIN_SUCCESS",
-                                     'customer': serialzer_customer.data,
-                                     'user_keywords': serialzer_user_keywords},
-                                    status=status.HTTP_200_OK)
+                # 사용자 키워드 불러오기
+                user_keywords = UserKeywords.objects.filter(user=customer)
+                if user_keywords:
+                    user_keywords = user_keywords[0]
+                    serialzer_user_keywords = UserKeywordsSerializer(
+                        user_keywords).data
                 else:
-                    return Response({"message": "INVALID_USER"}, status=status.HTTP_401_UNAUTHORIZED)
+                    serialzer_user_keywords = None
 
-            # email 틀렸을시 return
+                return Response({'message': "LOGIN_SUCCESS",
+                                'customer': serialzer_customer.data,
+                                 'user_keywords': serialzer_user_keywords},
+                                status=status.HTTP_200_OK)
+
             return Response({"message": "INVALID_USER"}, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as ex:
             print(ex)
@@ -60,16 +57,12 @@ class SignUpView(APIView):
     # 조회 get id값으로 !get_all 보내면 전체 조회, 특정 아이디 보내면 해당 아이디 정보 반환
     def get(self, request):
         reqString = request.GET.get('email', None)
-        # if reqString == "!get_all":
-        #     user_data = Customer.objects.values()
-        #     return JsonResponse({'users':list(user_data)}, status=20)
+
         try:
             account = Customer.objects.get(email=reqString)
-            # serializer = User_basic_serializer(account)
             # "account": CustomerSerializer( Customer.objects.f(email=reqString))
             return Response({"message": "EMAIL_EXISTS"}, status=status.HTTP_200_OK)
-        except Exception as ex:
-            print(ex)
+        except:
             return Response({'message': "USER_NOT_FOUND"}, status=status.HTTP_404_NOT_FOUND)
 
     # post방식으로 요청할 경우 회원가입한다.
@@ -89,7 +82,7 @@ class SignUpView(APIView):
             serializer = CustomerSerializer(data=data)
             if serializer.is_valid():
                 user = serializer.save()
-                return Response({'message': 'SIGNUP_SUCCESS'}, status=status.HTTP_200_OK)
+                return Response({'message': 'SIGNUP_SUCCESS', "email": user.email}, status=status.HTTP_200_OK)
             else:
                 return Response({'message': "SIGNUP_FAILED"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as ex:
@@ -213,14 +206,13 @@ class ProfileView(APIView):
     #             return JsonResponse({'message' : "email not exist"},status =400)
     #     except:
     #         return JsonResponse({'message' : "INVALID_KEYS"},status =400)
-    def post(self, request):
+    def patch(self, request):
         data = json.loads(request.body)
 
         # Check if customer exists
-        customer = Customer.objects.filter(email=data['email'])
-        if not customer.exists():
+        customer = Customer.objects.get(email=data['email'])
+        if not customer:
             return Response({'message': 'USER_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
-        customer = customer[0]
 
         try:
             # Update fields from request
