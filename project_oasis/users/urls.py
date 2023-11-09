@@ -9,7 +9,7 @@ urlpatterns = [
     path('findpw', FindPwView.as_view()),
     path('mailsend', EmailSendView.as_view()),
     path('mailverify', EmailVerifyView.as_view()),
-    path('profile/', ProfileView.as_view()),
-    path('profile/keyword/', UserKeyword.as_view()),
+    path('profile', ProfileView.as_view()),
+    path('profile/keyword', UserKeyword.as_view()),
     # path('cafeinfo', CafeInfoView.as_view()),
 ]
