@@ -1,6 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from django.contrib.auth import authenticate
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -224,8 +223,9 @@ class ProfileView(APIView):
             customer.save()
 
             return Response({'message': 'PROFILE_UPDATE_SUCCESS'}, status=status.HTTP_200_OK)
-        except:
-            return Response({'message': 'PROFILE_UPDATE_FAILED'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            print(ex)
+            return Response({"message": "INTERNAL_SERVER_ERROR"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # class CreateUserKeywords(APIView):
@@ -263,65 +263,58 @@ class ProfileView(APIView):
 class UserKeyword(APIView):
     def get(self, request):
         # Check if customer exists
-        data = json.loads(request.body)
-        customer = Customer.objects.filter(email=data['email'])
-        if not customer.exists():
-            return Response({'message': 'USER_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
-
-        # Check if UserKeywords exists
+        email = request.GET.get('email')
         try:
-            thing = Customer.objects.filter(email=data['email'])
-            user_keywords = UserKeywords.objects.get(user=thing[0])
-            return Response({'message': 'USER_KEYWORDS_EXISTS'}, status=status.HTTP_200_OK)
-        except UserKeywords.DoesNotExist:
-            return Response({'message': 'USER_KEYWORDS_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
+            customer = Customer.objects.get(email=email)
+            user_keywords = UserKeywords.objects.get(user=customer)
+
+            return Response({'message': 'USER_KEYWORDS_EXISTS', 'keyword': UserKeywordsSerializer(user_keywords).data}, status=status.HTTP_200_OK)
+        except:
+            return Response({'message': 'USER_OR_KEYWORD_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request):
         data = json.loads(request.body)
         user_keyword_value = list(data['user_keyword_value'])
 
-        customer = Customer.objects.filter(email=data['email'])
-        if customer.exists():
-            customer = customer[0]
-            if not UserKeywords.objects.filter(user=customer).exists():
-                try:
-                    UserKeywords.objects.create(
-                        user=customer,
-                        beverage=user_keyword_value[0],
-                        dessert=user_keyword_value[1],
-                        various_menu=user_keyword_value[2],
-                        special_menu=user_keyword_value[3],
-                        large_store=user_keyword_value[4],
-                        background=user_keyword_value[5],
-                        talking=user_keyword_value[6],
-                        concentration=user_keyword_value[7],
-                        trendy_store=user_keyword_value[8],
-                        gift_packaging=user_keyword_value[9],
-                        parking=user_keyword_value[10],
-                        price=user_keyword_value[11]
-                    )
-                    return Response({'message': "USER_KEYWORDS_CREATED_SUCCESS"}, status=status.HTTP_200_OK)
-                except:
-                    return Response({'message': "USER_KEYWORDS_CREATION_FAILED"}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                return Response({'message': "USER_KEYWORDS_EXISTS'"}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'message': "USER_NOT_FOUND"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            customer = Customer.objects.get(email=data['email'])
+        except:
+            return Response({'message': 'USER_NOT_FOUND'}, status=404)
+
+        if UserKeywords.objects.filter(user=customer):
+            return Response({'message': "USER_KEYWORDS_EXISTS'"}, status=status.HTTP_409_CONFLICT)
+
+        try:
+            UserKeywords.objects.create(
+                user=customer,
+                beverage=user_keyword_value[0],
+                dessert=user_keyword_value[1],
+                various_menu=user_keyword_value[2],
+                special_menu=user_keyword_value[3],
+                large_store=user_keyword_value[4],
+                background=user_keyword_value[5],
+                talking=user_keyword_value[6],
+                concentration=user_keyword_value[7],
+                trendy_store=user_keyword_value[8],
+                gift_packaging=user_keyword_value[9],
+                parking=user_keyword_value[10],
+                price=user_keyword_value[11]
+            )
+            return Response({'message': "USER_KEYWORDS_CREATED_SUCCESS"}, status=status.HTTP_200_OK)
+        except Exception as ex:
+            print(ex)
+            return Response({"message": "INTERNAL_SERVER_ERROR"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def put(self, request):
         data = json.loads(request.body)
         user_keyword_value = list(data['user_keyword_value'])
 
         # Check if customer exists
-        customer = Customer.objects.filter(email=data['email'])
-        if not customer.exists():
-            return Response({'message': 'USER_NOT_FOUND'}, status=404)
-
-        # Check if UserKeywords exists
         try:
-            user_keywords = UserKeywords.objects.get(user_id=customer[0])
-        except UserKeywords.DoesNotExist:
-            return Response({'message': 'USER_KEYWORDS_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
+            customer = Customer.objects.get(email=data["email"])
+            user_keywords = UserKeywords.objects.get(user=customer)
+        except:
+            return Response({'message': 'USER_OR_KEYWORD_NOT_FOUND'}, status=status.HTTP_404_NOT_FOUND)
 
         # Update fields from request
         try:
@@ -333,10 +326,10 @@ class UserKeyword(APIView):
 
             # Save the updated instance
             user_keywords.save()
-
             return Response({'message': 'USER_KEYWORDS_UPDATE_SUCCESS'}, status=status.HTTP_200_OK)
-        except:
-            return Response({'message': 'USER_KEYWORDS_UPDATE_FAILED'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            print(ex)
+            return Response({"message": "INTERNAL_SERVER_ERROR"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # try:
         #     existFlag = Customer.objects.filter(email = data['email']).exists()
