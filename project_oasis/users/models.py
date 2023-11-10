@@ -89,7 +89,7 @@ class UserKeywords(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 4)]
 
     user = models.OneToOneField(
-        User, on_delete=models.CASCADE, primary_key=True)
+        Customer, on_delete=models.CASCADE, primary_key=True)
     beverage = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     dessert = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
     various_menu = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
