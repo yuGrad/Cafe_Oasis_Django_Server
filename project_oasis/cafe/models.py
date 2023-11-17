@@ -16,7 +16,7 @@ class Cafe(models.Model):
     address = models.CharField(max_length=255)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    cafe_image = models.URLField(max_length=200, blank=True)
+    cafe_image = models.URLField(max_length=1024, blank=True)
 
     class Meta:
         db_table = 'Cafe'
