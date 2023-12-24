@@ -13,7 +13,7 @@ def create_user_cafe_profile_df(user_cafe_profile):
     return pd.DataFrame([user_cafe_profile], columns=cafe_value_columns_list)
 
 
-def classify_with_random_forest(neary_cafes_value, user_cafe_profile):
+def classify_with_random_forest(user_cafe_profile):
     # 랜덤 포레스트 모델로 카페 데이터 학습 -> grid search 로 찾은 최적의 파라미터 사용
     return rfc_model.predict(create_user_cafe_profile_df(user_cafe_profile))
 
@@ -34,8 +34,7 @@ def recommend_cafe_base_keyworkd(user_cafe_profile, nearby_cafes_value):
         columns=['cafe', 'price', 'parking', 'gift_packaging', 'clean_store', 'service'])
 
     # 랜덤 포레스트 모델로 라벨 값 분류해서 라벨에 해당하는 근처 카페 추출
-    classified_label = classify_with_random_forest(
-        nearby_cafes_value_df, user_cafe_profile)
+    classified_label = classify_with_random_forest(user_cafe_profile)
     nearby_cafes_value_df['cafe_id'] = [cafe_id for cafe_id in cafe_id_df]
     nearby_cafes_value_df = nearby_cafes_value_df[nearby_cafes_value_df['label'] == str(
         classified_label[0])]
