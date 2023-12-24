@@ -6,11 +6,10 @@ from rest_framework import status
 
 from .serializer import CafeSerializer
 from .ML import recommend, distance
-from .models import Cafe, CafeKeywords
+from .models import Cafe, CafeKeyword
 from users.models import UserKeywords, Customer
 from users.serializer import UserKeywordsSerializer
 
-import random
 import json
 
 
@@ -20,15 +19,10 @@ import json
 
 class RecommendCafeKeywordView(APIView):
     def get(self, request):
-        # data = json.loads(request.body.decode('utf-8'))
-        # user_cafe_profile = data['user_cafe_profile']
-        # user_location = data['user_location']
         email = request.GET.get("email")
-        # user_cafe_profile_str = request.GET.get('user_cafe_profile')
         user_location_str = request.GET.get('user_location')
 
         try:
-            # user_cafe_profile = list(map(int, user_cafe_profile_str.split(',')))
             if not email:
                 raise ValueError
             user_location = list(map(float, user_location_str.split(',')))
@@ -48,25 +42,14 @@ class RecommendCafeKeywordView(APIView):
         # 사용자 위치 기준 근처 카페 키워드 데이터
         nearby_cafes_id = distance.get_cafe_list_base_location(
             user_location, Cafe.objects.all())
-        nearby_cafes_value = CafeKeywords.objects.filter(
+        nearby_cafes_value = CafeKeyword.objects.filter(
             cafe__in=nearby_cafes_id)
         nearby_cafes = Cafe.objects.filter(cafe_id__in=nearby_cafes_id)
 
-        # # #랜덤으로 키워드가 없는 카페 중 하나 추천
-        # nearby_cafes_without_keywords = nearby_cafes.exclude(
-        #     cafe_id__in=nearby_cafes_value).values('cafe_id')
-        # # Extract the IDs of these cafes
-        # nearby_cafes_without_keywords_id = [
-        #     cafe['cafe_id'] for cafe in nearby_cafes_without_keywords]
-
         recommend_cafe_list = recommend.recommend_cafe_base_keyworkd(
             user_keyword_list, nearby_cafes_value)
-        # if nearby_cafes_without_keywords_id != []:
-        #     recommend_cafe_list.append(random.choice(
-        #         nearby_cafes_without_keywords_id))
-
         recommend_cafe = nearby_cafes.filter(cafe_id__in=recommend_cafe_list)
-        # recommend_cafe = Cafe.objects.filter(cafe_id__in=recommend_cafe_id_list)
+
         # 직렬화
         serializer = CafeSerializer(recommend_cafe, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -84,7 +67,7 @@ class RecommendCafeRatingView(APIView):
 
         nearby_cafes_id = distance.get_cafe_list_base_location(
             user_location, Cafe.objects.all())
-        nearby_cafes_value = CafeKeywords.objects.filter(
+        nearby_cafes_value = CafeKeyword.objects.filter(
             cafe__in=nearby_cafes_id)
 
         recommend_cafe_list = recommend.recommend_cafe_base_rating(
@@ -94,7 +77,6 @@ class RecommendCafeRatingView(APIView):
         # 직렬화
         serializer = CafeSerializer(recommend_cafe, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return JsonResponse(json.dump(json_data), safe=False, status=200)
 
 
 # def get_reviewed_cafes(request):
