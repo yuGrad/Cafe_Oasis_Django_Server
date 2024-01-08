@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-bxhw0qqt!)nujwzs3h*ebgo^*o0hbytykgh(k_b$_l59i^-^bv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cafeoasis.xyz', '*',
-                 '127.0.0.1', 'localhosts', '210.123.135.176']
+ALLOWED_HOSTS = ['*','127.0.0.1', 'localhosts']
 
 
 # Application definition
@@ -84,9 +83,9 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # mysqlclient librarly 설치
-        'NAME': 'Oasis_db',
-        'USER': 'du',
-        'PASSWORD': 'aa1541',  # mariaDB 설치 시 입력한 root 비밀번호 입력
+        'NAME': 'oasis',
+        'USER': 'nodejs',
+        'PASSWORD': '1234',  # mariaDB 설치 시 입력한 root 비밀번호 입력
         'HOST': 'localhost',
         'PORT': ''
     }
@@ -130,7 +129,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # User Model 관련
-AUTH_USER_MODEL = "users.User"  # User model 정의
+AUTH_USER_MODEL = "users.Customer"  # User model 정의
 
 # Default primary key field type https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

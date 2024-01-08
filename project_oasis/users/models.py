@@ -37,10 +37,10 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser, PermissionsMixin):
-    USER_TYPE_CHOICES = [
-        ('1', 'Customer'),
-        ('2', 'Employee'),
+class Customer(AbstractBaseUser, PermissionsMixin):
+    SEX_CHOICES = [
+        ('1', 'Male'),
+        ('2', 'Female'),
     ]
 
     user_id = models.AutoField(primary_key=True)
@@ -49,11 +49,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     # bcrypt를 사용해도 접두어가 존재할 수 있으므로 60자보다 길 수 있음
     password = models.CharField(max_length=128, null=False)
     name = models.CharField(max_length=255, null=False)
+    nickname = models.CharField(max_length=15)
+    age = models.IntegerField()
+    sex = models.CharField(max_length=6, choices=SEX_CHOICES)
     phone_no = models.CharField(max_length=20, default='none')
     registration_date = models.DateTimeField(auto_now_add=True)
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
 
-    is_staff = models.BooleanField(default=False)
+    # is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     # is_superuser = models.BooleanField(default=False) # permissionsmixin interface에서 제공하는 속성이므로 제거
 
@@ -63,20 +65,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['name']
 
     objects = UserManager()
-
-    class Meta:
-        db_table = 'User'
-
-
-class Customer(User):
-    SEX_CHOICES = [
-        ('1', 'Male'),
-        ('2', 'Female'),
-    ]
-
-    nickname = models.CharField(max_length=15)
-    age = models.IntegerField()
-    sex = models.CharField(max_length=6, choices=SEX_CHOICES)
 
     def __str__(self):
         return f'{self.user_id}, {self.email}'

@@ -1,5 +1,5 @@
 from django.db import models
-from users.models import User
+from users.models import Customer
 from cafe.models import Cafe
 
 # Create your models here.
@@ -8,7 +8,7 @@ from cafe.models import Cafe
 class VisitHistory(models.Model):
     visit_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        User, on_delete=models.DO_NOTHING)
+        Customer, on_delete=models.DO_NOTHING)
     cafe = models.ForeignKey(
         Cafe, on_delete=models.DO_NOTHING)
     total_spend = models.DecimalField(max_digits=10, decimal_places=0)
@@ -23,7 +23,7 @@ class CafeRating(models.Model):
 
     rating_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        User, on_delete=models.DO_NOTHING)
+        Customer, on_delete=models.DO_NOTHING)
     cafe = models.ForeignKey(
         Cafe, on_delete=models.DO_NOTHING)
     rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES)
